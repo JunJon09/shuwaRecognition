@@ -31,6 +31,7 @@ cap = cv2.VideoCapture(0)
 class Application(DemoGUI, Pipeline):
 
     def __init__(self):
+        print("動いていた")
         super().__init__()
         self.video_loop()
 
@@ -39,16 +40,21 @@ class Application(DemoGUI, Pipeline):
         self.update_canvas()
 
     def tab_btn_cb(self, event):
+        print("っっっb")
         super().tab_btn_cb(event)
         # check database before change from record mode to play mode.
+        print(self.is_play_mode)
         if self.is_play_mode:
+            print("aa")
             ret = self.translator_manager.load_knn_database()
+            print("AA")
             if not ret:
                 logging.error("KNN Sample is missing. Please record some samples before starting play mode.")
                 self.notebook.select(0)
 
     def record_btn_cb(self):
         super().record_btn_cb()
+        print("aaa")
         if self.is_recording:
             return
 
@@ -56,7 +62,6 @@ class Application(DemoGUI, Pipeline):
             logging.warnning("Video too short.")
             self.reset_pipeline()
             return
-
         vid_res = {
             "pose_frames": np.stack(self.pose_history),
             "face_frames": np.stack(self.face_history),
@@ -72,6 +77,7 @@ class Application(DemoGUI, Pipeline):
             res_txt = self.translator_manager.run_knn(feats)
             self.console_box.delete('1.0', 'end')
             self.console_box.insert('end', f"Nearest class: {res_txt}\n")
+            print(res_txt)
 
         # KNN-Record mode: save feats.
         else:
@@ -100,7 +106,6 @@ class Application(DemoGUI, Pipeline):
         self.name_box.delete(0, 'end')
 
     def video_loop(self):
-
         ret, frame = cap.read()
         if not ret:
             logging.error("Camera frame not available.")

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Streaming</title>
+    <style>
+        #camera {
+            width: 66.66%;
+            float: left;
+        }
+        #controls {
+            width: 33.33%;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div id="camera">
+        <img src="{{ url_for('video_feed') }}" />
+    </div>
+    <div id="controls">
+        <!-- コントロールパネルの内容（例：録画スタートボタンなど） -->
+        <button class="favorite styled" type="button">Add to favorites</button>
+    </div>
+</body>
+</html>

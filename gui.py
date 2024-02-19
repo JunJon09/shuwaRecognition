@@ -52,12 +52,13 @@ class DemoGUI:
 
         self.is_play_mode = 0
         self.is_recording = False
+        # print(self.is_play_mode, "bbbb")
 
         # ─── RECORD MODE ─────────────────────────────────────────────────
 
         # record button.
         self.record_btn_text = StringVar(self.TAB1, name="record_btn_text")
-        self.record_btn_text.set("Record")
+        self.record_btn_text.set("")
         self.is_recording = False
         record_btn = Button(self.TAB1, textvariable=self.record_btn_text, command=self.record_btn_cb).grid(columnspan=2,
                                                                                                            sticky=W)
@@ -79,7 +80,7 @@ class DemoGUI:
 
         # record button.
         self.record_btn_text = StringVar(self.TAB2, name="record_btn_text")
-        self.record_btn_text.set("Record")
+        self.record_btn_text.set("")
         self.is_recording = False
         record_btn_p = Button(self.TAB2, textvariable=self.record_btn_text,
                               command=self.record_btn_cb).grid(columnspan=2, sticky=W)
@@ -98,13 +99,13 @@ class DemoGUI:
             self.save_btn["state"] = DISABLED
 
         else:
-            self.record_btn_text.set("Record")
+            self.record_btn_text.set("")
             self.notebook.tab(not tab_id, state="normal")
             self.name_box["state"] = NORMAL
             self.save_btn["state"] = NORMAL
 
     def tab_btn_cb(self, event):
-        self.is_play_mode = self.notebook.index("current")
+        self.is_play_mode = 0
 
     def save_btn_cb(self):
         pass

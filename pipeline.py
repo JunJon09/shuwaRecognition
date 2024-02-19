@@ -40,6 +40,13 @@ class Pipeline:
         self.lh_history = []
         self.rh_history = []
 
+    #配列の一番前だけ消す。
+    def delete_front(self):
+        self.pose_history.pop(0)
+        self.face_history.pop(0)
+        self.lh_history.pop(0)
+        self.rh_history.pop(0)
+            
     def update(self, frame_rgb):
         h, w, _ = frame_rgb.shape
         assert h == w
@@ -49,9 +56,8 @@ class Pipeline:
         # Return if not found person.
         if np.all(frame_res["pose_4d"] == 0.):
             return
-
         if self.is_recording:
-            cv2.putText(frame_rgb, "Recording...", (10, 300), cv2.FONT_HERSHEY_DUPLEX, 2, (255, 0, 0), 1)
+            #cv2.putText(frame_rgb, "Recording...", (10, 300), cv2.FONT_HERSHEY_DUPLEX, 2, (255, 0, 0), 1)
 
             self.pose_history.append(frame_res["pose_4d"])
             self.face_history.append(frame_res["face_3d"])
