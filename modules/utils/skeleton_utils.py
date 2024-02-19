@@ -182,7 +182,7 @@ def preprocess_keypoints_tf(pose,
     face_center = face[:, :, 0]
     midfin_location_l = lhand[:, :, midfin]
     midfin_location_r = rhand[:, :, midfin]
-
+    
     # # normalize.
     pose = normalize_keypoints(pose,
                                center_location=pose_center,

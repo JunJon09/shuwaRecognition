@@ -118,7 +118,9 @@ def d1D(x, filters):
 
 def conv_enc(filters, n_gather, n_frames):
     encoder_input = Input(shape=(n_frames, n_gather))
+    
     x = c1D(encoder_input, filters * 2, 1)
+   
     x = SpatialDropout1D(0.1)(x)
     x = c1D(x, filters, 1)
     x = MaxPooling1D(2)(x)
@@ -129,19 +131,18 @@ def conv_enc(filters, n_gather, n_frames):
 
 @gin.configurable
 def get_model(batch_size: int, n_pose_feats: int, n_face_feats: int, n_hand_feats: int, n_classes: int, n_frames: int):
-
     # top-right Euclidean.
     gather_pose = get_triu_indicies(batch_size, n_joints=15, n_frames=n_frames)
     gather_face = get_triu_indicies(batch_size, n_joints=25, n_frames=n_frames)
     gather_hand = get_triu_indicies(batch_size, n_joints=21, n_frames=n_frames)
-
+    
     # ------ INPUT --------
     pose_3d = Input(batch_shape=(batch_size, n_frames, 15, 3), name='pose_3d')
     face_3d = Input(batch_shape=(batch_size, n_frames, 25, 3), name='face_3d')
     lh_3d = Input(batch_shape=(batch_size, n_frames, 21, 3), name='lh_3d')
     rh_3d = Input(batch_shape=(batch_size, n_frames, 21, 3), name='rh_3d')
 
-    # ------ PREPROCESS ------
+    # ------ PREPROCESS ------　相対座標を取得
     pose_3d_, face_3d_, lh_3d_, rh_3d_ = utils.skeleton_utils.preprocess_keypoints_tf(pose_3d, face_3d, lh_3d, rh_3d)
 
     # ======================= POSE ======================================
@@ -168,6 +169,7 @@ def get_model(batch_size: int, n_pose_feats: int, n_face_feats: int, n_hand_feat
     face_enc = d1D(face_enc, 256)
     face_feats = Dense(n_face_feats)(face_enc)
     face_feats = tf.math.l2_normalize(face_feats, axis=-1)
+    
 
     # ======================= HAND ======================================
     hand_encoder = conv_enc(D_MODEL, n_gather=294, n_frames=n_frames)
