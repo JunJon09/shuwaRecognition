@@ -43,7 +43,6 @@ class TranslatorManager():
 
     def load_knn_database(self):
         logging.info("Reading database...")
-        print("これ呼ばれた？")
         txt_files = list(Path(self.knn_dir).glob("*.txt"))
 
         if len(txt_files) == 0:
@@ -74,7 +73,6 @@ class TranslatorManager():
 
 
         knn_feats.extend(knn_records)
-        print(knn_feats)
         with open(output_path, 'a') as f_handle:
             np.savetxt(f_handle, knn_feats, fmt='%.8f')
 
