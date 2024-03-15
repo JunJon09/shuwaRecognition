@@ -55,7 +55,7 @@ class TranslatorManager():
             arr = np.loadtxt(txt)
             knn_database.extend(arr)
             knn_labels.extend([txt.stem] * len(arr))
-
+        print(knn_database)
         self.knn_database = np.stack(knn_database)
         self.knn_labels = np.array(knn_labels)
 

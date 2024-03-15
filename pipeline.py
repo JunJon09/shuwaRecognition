@@ -48,8 +48,8 @@ class Pipeline:
         self.rh_history.pop(0)
             
     def update(self, frame_rgb):
-        h, w, _ = frame_rgb.shape
-        assert h == w
+        # h, w, _ = frame_rgb.shape
+        # assert h == w
 
         frame_res = self.holistic_manager(frame_rgb)
 

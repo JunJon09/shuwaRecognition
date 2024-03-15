@@ -9,11 +9,12 @@ from pipeline import Pipeline
 import matplotlib.pyplot as plt
 import numpy as np
 from collections import Counter
+import gc
 
 # cap = cv2.VideoCapture(0)
-cap = ""
-class WebCam(Pipeline):
 
+class WebCam(Pipeline):
+    cap = ""
     def __init__(self, flag, video_file_path, name):
         global cap
         cap = cv2.VideoCapture(video_file_path)
@@ -21,8 +22,8 @@ class WebCam(Pipeline):
             print("Error: Could not open video.")
             exit()
         super().__init__()
-        ret = self.translator_manager.load_knn_database()
-        if not ret:
+        #ret = self.translator_manager.load_knn_database()
+        if not True:
             logging.error("KNN Sample is missing. Please record some samples before starting play mode.")
             self.notebook.select(0)
         self.flag  = flag #手話単語の判別とデータベースに登録　Trueなら判別, Falseならデータベース登録
@@ -90,9 +91,10 @@ class WebCam(Pipeline):
                 else: #手話単語DB登録
                     self.record_btn_cb()
                     print("データベースに登録が完了しました。")
+                gc.collect()
                 break
             try:
-                frame = utils.crop_utils.crop_square(frame)
+                #frame = utils.crop_utils.crop_square(frame)
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
                 self.update(frame_rgb)
@@ -163,5 +165,5 @@ class WebCam(Pipeline):
         self.plot_word_counts(self.resumeList)
 
 
-if __name__ == "__main__":
-    app = WebCam(True, './test/おはよう/04.mp4', "like")
+# if __name__ == "__main__":
+#     app = WebCam(True, './test/おはよう/04.mp4', "like")
