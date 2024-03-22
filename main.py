@@ -10,34 +10,32 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import Counter
 import gc
+from memory_profiler import profile
+
 
 # cap = cv2.VideoCapture(0)
 
 class WebCam(Pipeline):
-    cap = ""
-    def __init__(self, flag, video_file_path, name):
-        global cap
-        cap = cv2.VideoCapture(video_file_path)
-        if not cap.isOpened():
-            print("Error: Could not open video.")
-            exit()
+    def __init__(self):
+        # if not self.cap.isOpened():
+        #     print("Error: Could not open video.")
+        #     exit()
         super().__init__()
         #ret = self.translator_manager.load_knn_database()
-        if not True:
-            logging.error("KNN Sample is missing. Please record some samples before starting play mode.")
-            self.notebook.select(0)
-        self.flag  = flag #手話単語の判別とデータベースに登録　Trueなら判別, Falseならデータベース登録
-        self.name = name
+        # if not True:
+        #     logging.error("KNN Sample is missing. Please record some samples before starting play mode.")
+        #     self.notebook.select(0)
+         #手話単語の判別とデータベースに登録　Trueなら判別, Falseならデータベース登録
         self.word_memory = []
         self.frame_count = 0
         self.word = ""
         self.resumeList = []
         self.N = 30 #手話単語認識のフレームの閾値
         self.splitFrame = []
-        self.video_loop()
-       
+        
 
-    def record_btn_cb(self):        
+    def record_btn_cb(self): 
+              
         vid_res = {
             "pose_frames": np.stack(self.pose_history),
             "face_frames": np.stack(self.face_history),
@@ -45,7 +43,7 @@ class WebCam(Pipeline):
             "rh_frames": np.stack(self.rh_history),
             "n_frames": len(self.pose_history)
         }
-       
+        
         feats = self.translator_manager.get_feats(vid_res)
         if self.flag: #手話単語認識
             res_txt, resume = self.translator_manager.run_knn(feats)
@@ -54,7 +52,7 @@ class WebCam(Pipeline):
             self.word_memory.append([self.frame_count, res_txt])
             self.resumeList.append([self.frame_count, resume])
             self.delete_front()
-
+        
         else: #手話単語の特徴量登録
             self.knn_records.append(feats)
             self.save_btn_cb()
@@ -77,12 +75,19 @@ class WebCam(Pipeline):
         self.knn_records = []
 
         
+    def video_loop(self, video_file_path, name, flag):
+        self.cap = cv2.VideoCapture(video_file_path)
+        self.name = name
+        self.flag  = flag
+        self.frame_count = 0
+        #print(self.face_history)
+        #print(self.knn_records)
 
-
-    def video_loop(self):
+    
+        
         while True:
             self.frame_count += 1
-            ret, frame = cap.read()
+            ret, frame = self.cap.read()
             if not ret:
                 print("動画が終了しました")
                 if self.flag == True: #手話単語認識
@@ -91,6 +96,8 @@ class WebCam(Pipeline):
                 else: #手話単語DB登録
                     self.record_btn_cb()
                     print("データベースに登録が完了しました。")
+                self.reset_pipeline()
+                self.cap.release()
                 gc.collect()
                 break
             try:
@@ -98,7 +105,7 @@ class WebCam(Pipeline):
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
                 self.update(frame_rgb)
-                cv2.imshow("Camera", frame_rgb)
+                #cv2.imshow("Camera", frame_rgb)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
                 if self.frame_count >= self.N and self.flag==True: #閾値以上の時に手話単語認識を行う
@@ -165,5 +172,5 @@ class WebCam(Pipeline):
         self.plot_word_counts(self.resumeList)
 
 
-# if __name__ == "__main__":
-#     app = WebCam(True, './test/おはよう/04.mp4', "like")
+if __name__ == "__main__":
+    app = WebCam(False, './test/おはよう/04.mp4', "aaa")

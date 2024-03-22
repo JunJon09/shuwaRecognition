@@ -75,12 +75,13 @@ class TranslatorManager():
         knn_feats.extend(knn_records)
         with open(output_path, 'a') as f_handle:
             np.savetxt(f_handle, knn_feats, fmt='%.8f')
+            f_handle.close()
+        del knn_feats
 
     def preprocess_input(self, vid_res: dict, resampling: int):
         # Remove non-visible joints.
         vid_res = utils.skeleton_utils.filter_visibility(vid_res) #両手の可視性が低いのを削除
         if resampling > 0:
-            
             indices = utils.skeleton_utils.uniform_sampling(vid_res["n_frames"], n_pick=resampling)
             vid_res["n_frames"] = resampling
             vid_res = utils.skeleton_utils.apply_resampling(vid_res, indices)
@@ -88,10 +89,10 @@ class TranslatorManager():
         return vid_res
 
     def get_feats(self, vid_res: dict, is_augment=False):
+        
         vid_res = self.preprocess_input(vid_res, self.n_frames) #一定間隔でフレームを選択
         if is_augment:
             vid_res = augmentation.augment_video(vid_res)
-        
         feats_out, cls_out = self.model([
             vid_res["pose_frames"][np.newaxis], vid_res["face_frames"][np.newaxis], vid_res["lh_frames"][np.newaxis],
             vid_res["rh_frames"][np.newaxis]
